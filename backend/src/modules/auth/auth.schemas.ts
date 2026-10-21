@@ -7,3 +7,10 @@ export const registerSchema = z.object({
 });
 
 export type RegisterDTO = z.infer<typeof registerSchema>;
+
+export const loginSchema = z.object({
+  email: z.email().trim().toLowerCase(),
+  senha: z.string().min(1, "Senha obrigatória"),
+});
+
+export type LoginDTO = z.infer<typeof loginSchema>;
