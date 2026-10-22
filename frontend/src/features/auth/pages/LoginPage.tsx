@@ -3,6 +3,11 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+
+import { loginUser } from "../api/auth.api";
 
 import { AuthLayout } from "../components/AuthLayout";
 import { PasswordField } from "../components/PasswordField";
@@ -15,6 +20,13 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [apiError, setApiError] = useState("");
+
+  const cadastroRealizado = location.state?.cadastroRealizado;
+  
   const {
     register,
     handleSubmit,
@@ -23,9 +35,29 @@ export function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  async function onSubmit(data: LoginFormData) {
-    console.log("Dados do login:", data);
+async function onSubmit(data: LoginFormData) {
+  setApiError("");
+
+  try {
+    const response = await loginUser(data);
+
+    if (response.accessToken) {
+      navigate("/");
+    }
+  } catch (error) {
+    if (
+      axios.isAxiosError(error) &&
+      error.response?.status === 401
+    ) {
+      setApiError("E-mail ou senha inválidos.");
+      return;
+    }
+
+    setApiError(
+      "Não foi possível entrar. Verifique sua conexão e tente novamente."
+    );
   }
+}
 
   return (
     <AuthLayout>
@@ -48,6 +80,15 @@ export function LoginPage() {
       <p className="mt-2 text-sm leading-6 text-achaqui-muted">
         Entre para encontrar ou oferecer serviços em Quixadá.
       </p>
+
+      {cadastroRealizado && (
+        <div
+          role="status"
+          className="mt-6 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800"
+        >
+          Conta criada com sucesso! Agora você já pode entrar.
+        </div>
+      )}
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -90,12 +131,20 @@ export function LoginPage() {
           </span>
         </div>
 
+        {apiError && (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+          >
+            {apiError}
+          </div>
+        )}
         <button
           type="submit"
           disabled={isSubmitting}
           className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-achaqui-green font-semibold text-white transition hover:bg-achaqui-dark disabled:opacity-60"
         >
-          Entrar <ArrowRight size={18} />
+          {isSubmitting ? "Entrando..." : "Entrar"} <ArrowRight size={18} />
         </button>
       </form>
 

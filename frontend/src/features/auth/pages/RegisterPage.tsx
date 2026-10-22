@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+import { registerUser } from "../api/auth.api";
 
 import { AuthLayout } from "../components/AuthLayout";
 import { PasswordField } from "../components/PasswordField";
@@ -18,6 +23,8 @@ const inputClass =
   "focus:ring-achaqui-green/15";
 
 export function RegisterPage() {
+  const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
   const {
     register,
     handleSubmit,
@@ -26,14 +33,39 @@ export function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  async function onSubmit(data: RegisterFormData) {
-    // A integração com a API será feita depois.
-    // Não exibir senhas no console.
-    console.log("Cadastro validado:", {
+async function onSubmit(data: RegisterFormData) {
+  setApiError("");
+
+  try {
+    await registerUser({
       nome: data.nome,
       email: data.email,
+      senha: data.senha,
     });
+
+    navigate("/login", {
+      state: {
+        cadastroRealizado: true,
+      },
+    });
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 409) {
+        setApiError("Este e-mail já está cadastrado.");
+        return;
+      }
+
+      if (error.response?.status === 400) {
+        setApiError("Confira os dados informados.");
+        return;
+      }
+    }
+
+    setApiError(
+      "Não foi possível criar sua conta. Tente novamente."
+    );
   }
+}
 
   return (
     <AuthLayout>
@@ -63,7 +95,7 @@ export function RegisterPage() {
         noValidate
         className="mt-7 space-y-4"
       >
-        {/* Nome */}
+     
         <div className="space-y-2">
           <label
             htmlFor="nome"
@@ -89,7 +121,6 @@ export function RegisterPage() {
           )}
         </div>
 
-        {/* E-mail */}
         <div className="space-y-2">
           <label
             htmlFor="email"
@@ -115,7 +146,6 @@ export function RegisterPage() {
           )}
         </div>
 
-        {/* Senha */}
         <PasswordField
           id="senha"
           label="Senha"
@@ -125,7 +155,6 @@ export function RegisterPage() {
           {...register("senha")}
         />
 
-        {/* Confirmar senha */}
         <PasswordField
           id="confirmarSenha"
           label="Confirmar senha"
@@ -140,12 +169,20 @@ export function RegisterPage() {
           Termos de Uso e a Política de Privacidade.
         </p>
 
+        {apiError && (
+          <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+          >
+          {apiError}
+          </div>
+        )}
         <button
           type="submit"
           disabled={isSubmitting}
           className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-achaqui-green font-semibold text-white transition hover:bg-achaqui-dark disabled:opacity-60"
         >
-          Criar minha conta
+          {isSubmitting ? "Criando conta..." : "Criar minha conta"}
           <ArrowRight size={18} />
         </button>
       </form>
