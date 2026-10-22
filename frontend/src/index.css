@@ -1,4 +1,32 @@
 @import "tailwindcss";
 
-:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #172033; background: #f8fafc; }
-button, a { cursor: pointer; }
+@theme {
+  --color-achaqui-green: #2f6b4f;
+  --color-achaqui-dark: #244d39;
+  --color-achaqui-cream: #f8f3ea;
+  --color-achaqui-orange: #e59b3a;
+  --color-achaqui-text: #2d2a26;
+  --color-achaqui-muted: #6f6a63;
+  --color-achaqui-border: #e8ded1;
+}
+
+:root {
+  font-family: "Inter", sans-serif;
+  color: #2d2a26;
+  background: #f8f3ea;
+  font-synthesis: none;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
