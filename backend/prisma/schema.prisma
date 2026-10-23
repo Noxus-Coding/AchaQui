@@ -13,13 +13,46 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model Usuario {
-  id           String   @id @default(uuid())
-  nome         String
-  email        String   @unique
-  senhaHash    String
-  criadoEm     DateTime @default(now())
-  atualizadoEm DateTime @updatedAt
+  id                String              @id @default(uuid())
+  nome              String
+  email             String              @unique
+  senhaHash         String
+  criadoEm          DateTime            @default(now())
+  atualizadoEm      DateTime            @updatedAt
+
+  perfilProfissional PerfilProfissional?
 
   @@map("usuarios")
 }
+
+model PerfilProfissional {
+  id                String     @id @default(uuid())
+  usuarioId         String     @unique
+  nomeProfissional  String
+  descricao         String
+  whatsapp          String
+  bairro            String
+  fotoUrl           String?
+  experiencia       String?
+  criadoEm          DateTime   @default(now())
+  atualizadoEm      DateTime   @updatedAt
+
+  usuario           Usuario    @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  categorias        Categoria[]
+
+  @@map("perfis_profissionais")
+}
+
+model Categoria {
+  id                String               @id @default(uuid())
+  nome              String               @unique
+  descricao         String?
+  criadoEm          DateTime             @default(now())
+
+  profissionais     PerfilProfissional[]
+
+  @@map("categorias")
+}
+
