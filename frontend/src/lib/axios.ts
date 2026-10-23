@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAccessToken } from "../features/auth/api/token";
 
 export const api = axios.create({
   baseURL: "/api",
@@ -6,4 +7,14 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+
+  if (token) {
+    config.headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  return config;
 });

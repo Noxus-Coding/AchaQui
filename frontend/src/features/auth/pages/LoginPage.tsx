@@ -7,10 +7,9 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-import { loginUser } from "../api/auth.api";
-
 import { AuthLayout } from "../components/AuthLayout";
 import { PasswordField } from "../components/PasswordField";
+import { useAuth } from "../hooks/useAuth";
 
 const loginSchema = z.object({
   email: z.email("Informe um e-mail válido"),
@@ -22,6 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const {login} = useAuth();
 
   const [apiError, setApiError] = useState("");
 
@@ -39,11 +39,9 @@ async function onSubmit(data: LoginFormData) {
   setApiError("");
 
   try {
-    const response = await loginUser(data);
+    await login(data);
 
-    if (response.accessToken) {
-      navigate("/");
-    }
+    navigate("/dashboard", { replace: true });
   } catch (error) {
     if (
       axios.isAxiosError(error) &&
@@ -53,9 +51,7 @@ async function onSubmit(data: LoginFormData) {
       return;
     }
 
-    setApiError(
-      "Não foi possível entrar. Verifique sua conexão e tente novamente."
-    );
+    setApiError("Não foi possível realizar o login.");
   }
 }
 
