@@ -58,14 +58,12 @@ export function ProfessionalAreaSection() {
             </div>
 
             <div className="flex flex-col items-start gap-2">
-              <span className="inline-flex items-center gap-2 rounded-xl bg-gray-100 px-5 py-3 text-sm font-semibold text-achaqui-muted">
+              <Link to="/cadastro-profissional" className="inline-flex items-center justify-center gap-2 rounded-xl bg-achaqui-green px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-achaqui-dark"
+              >
                 <Plus size={18} />
-                Criar perfil profissional
-              </span>
-
-              <p className="text-xs text-achaqui-muted">
-                Formulário de cadastro em desenvolvimento
-              </p>
+                  Criar perfil profissional
+                <ArrowRight size={17} />
+              </Link>
             </div>
           </div>
         )}

@@ -8,6 +8,7 @@ import type {
 } from "../types/profissional.types";
 
 import type { Profissional } from "../types/profissional.types";
+import type { CadastroProfissionalFormData } from "../schemas/cadastro-profissional.schema";
 
 export async function listarProfissionais(
   filtros: FiltrosProfissionais = {}
@@ -56,3 +57,35 @@ export async function buscarMeuPerfilProfissional(): Promise<Profissional | null
     throw error;
   }
 }
+
+export async function criarPerfilProfissional(
+  dados: CadastroProfissionalFormData
+): Promise<Profissional> {
+  const { data } = await api.post<{ perfil: Profissional }>(
+    "/profissionais",
+    {
+      ...dados,
+      fotoUrl: dados.fotoUrl || undefined,
+      experiencia: dados.experiencia || undefined,
+    }
+  );
+
+  return data.perfil;
+}
+
+
+export async function atualizarMeuPerfilProfissional(
+  dados: CadastroProfissionalFormData
+): Promise<Profissional> {
+  const { data } = await api.patch<{ perfil: Profissional }>(
+    "/profissionais/me",
+    {
+      ...dados,
+      fotoUrl: dados.fotoUrl || null,
+      experiencia: dados.experiencia || null,
+    }
+  );
+
+  return data.perfil;
+}
+

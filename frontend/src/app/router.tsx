@@ -7,6 +7,7 @@ import { ProtectedRoute } from "../features/auth/components/ProtectedRoute";
 import { DashboardPage } from "../features/home/pages/DashboardPage";
 import { ProfissionaisPage } from "../features/profissionais/page/ProfissionaisPage";
 import { ProfissionalDetalhesPage } from "../features/profissionais/page/ProfissionalDetalhesPage";
+import { CadastroProfissionalPage } from "../features/profissionais/page/CadastroProfissionalPage";
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path:"/cadastro-profissional",
+        element: <CadastroProfissionalPage/>,
       },
     ],
   },
