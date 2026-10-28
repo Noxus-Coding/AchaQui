@@ -15,14 +15,15 @@ datasource db {
 
 
 model Usuario {
-  id                String              @id @default(uuid())
-  nome              String
-  email             String              @unique
-  senhaHash         String
-  criadoEm          DateTime            @default(now())
-  atualizadoEm      DateTime            @updatedAt
+  id                 String              @id @default(uuid())
+  nome               String
+  email              String              @unique
+  senhaHash          String
+  criadoEm           DateTime            @default(now())
+  atualizadoEm       DateTime            @updatedAt
 
   perfilProfissional PerfilProfissional?
+  refreshTokens      RefreshToken[]
 
   @@map("usuarios")
 }
@@ -55,4 +56,19 @@ model Categoria {
 
   @@map("categorias")
 }
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  usuarioId  String
+  tokenHash  String    @unique
+  expiraEm   DateTime
+  revogadoEm DateTime?
+  criadoEm   DateTime  @default(now())
+
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@map("refresh_tokens")
+}
+
 

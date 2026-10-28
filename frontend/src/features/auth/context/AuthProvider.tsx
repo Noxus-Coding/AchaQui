@@ -1,10 +1,16 @@
+
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { AuthContext } from "./AuthContext";
 import { loginUser } from "../api/auth.api";
 import type { LoginRequest, Usuario } from "../api/auth.api";
-import { setAccessToken } from "../api/token";
+import { renovarSessao, encerrarSessao } from "../api/session.api";
+import {
+  setAccessToken,
+  invalidarAutenticacao,
+} from "../api/token";
+import { observarSessaoExpirada } from "../api/auth-events";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -12,43 +18,78 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
-  const expirationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [carregandoSessao, setCarregandoSessao] = useState(true);
 
-  function logout() {
-    setAccessToken(null);
+  const versaoSessao = useRef(0);
+
+  
+  useEffect(() => {
+    return observarSessaoExpirada(() => {
+      ++versaoSessao.current;
+
+      limparSessaoLocal();
+      setCarregandoSessao(false);
+    });
+  }, []);
+
+
+  function limparSessaoLocal() {
+    invalidarAutenticacao();
     setUsuario(null);
-
-    if (expirationTimer.current) {
-      clearTimeout(expirationTimer.current);
-      expirationTimer.current = null;
-    }
   }
 
   async function login(data: LoginRequest) {
+    const versao = ++versaoSessao.current;
+
     const response = await loginUser(data);
 
-    logout();
+    if (versao !== versaoSessao.current) return;
 
     setAccessToken(response.accessToken);
     setUsuario(response.usuario);
+    setCarregandoSessao(false);
+  }
 
-    // Encerrar a sessão quando o token expirar.
-    const expiresInMs = response.expiresIn * 1000;
+  async function logout() {
+    ++versaoSessao.current;
 
-    if (expiresInMs > 0) {
-      expirationTimer.current = setTimeout(() => {
-        logout();
-      }, expiresInMs);
+    limparSessaoLocal();
+    setCarregandoSessao(false);
+
+    try {
+      await encerrarSessao();
+    } catch (error) {
+      console.error("Não foi possível encerrar a sessão:", error);
     }
   }
 
   useEffect(() => {
-    return () => {
-      setAccessToken(null);
+    let ativo = true;
+    const versao = ++versaoSessao.current;
 
-      if (expirationTimer.current) {
-        clearTimeout(expirationTimer.current);
+    async function recuperarSessao() {
+      try {
+        const response = await renovarSessao();
+
+        if (!ativo || versao !== versaoSessao.current) return;
+
+        setAccessToken(response.accessToken);
+        setUsuario(response.usuario);
+      } catch {
+        if (!ativo || versao !== versaoSessao.current) return;
+
+        limparSessaoLocal();
+      } finally {
+        if (ativo && versao === versaoSessao.current) {
+          setCarregandoSessao(false);
+        }
       }
+    }
+
+    void recuperarSessao();
+
+    return () => {
+      ativo = false;
     };
   }, []);
 
@@ -57,6 +98,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         usuario,
         isAuthenticated: usuario !== null,
+        carregandoSessao,
         login,
         logout,
       }}

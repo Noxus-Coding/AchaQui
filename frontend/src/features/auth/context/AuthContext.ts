@@ -6,6 +6,7 @@ export interface AuthContextData {
   isAuthenticated: boolean;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => void;
+  carregandoSessao: boolean;
 }
 
 export const AuthContext = createContext<AuthContextData | null>(null);
