@@ -6,10 +6,10 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "../../../components/ui/Logo";
 
 const links = [
-  { label: "Início", href: "#inicio" },
-  { label: "Como funciona", href: "#como-funciona" },
-  { label: "Serviços", href: "#servicos" },
-  { label: "Para profissionais", href: "#para-profissionais" },
+  { label: "Início", href: "/#inicio" },
+  { label: "Como funciona", href: "/#como-funciona" },
+  { label: "Serviços", href: "/#servicos" },
+  { label: "Para profissionais", href: "/#para-profissionais" },
 ];
 
 export function Header() {
