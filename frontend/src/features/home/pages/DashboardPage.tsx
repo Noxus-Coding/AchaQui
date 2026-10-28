@@ -2,6 +2,7 @@ import { AuthenticatedHeader } from "../components/AuthenticatedHeader";
 import { WelcomeSection } from "../sections/WelcomeSection";
 import { QuickActionsSection } from "../sections/QuickActionsSection";
 import { QuickSearchSection } from "../sections/QuickSearchSection";
+import { ProfessionalAreaSection } from "../sections/ProfessionalAreaSection";
 
 export function DashboardPage() {
   return (
@@ -10,6 +11,7 @@ export function DashboardPage() {
       <WelcomeSection />
       <QuickActionsSection />
       <QuickSearchSection />
+      <ProfessionalAreaSection />
     </div>
   );
 }
