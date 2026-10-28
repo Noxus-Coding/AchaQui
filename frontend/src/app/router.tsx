@@ -8,6 +8,7 @@ import { DashboardPage } from "../features/home/pages/DashboardPage";
 import { ProfissionaisPage } from "../features/profissionais/page/ProfissionaisPage";
 import { ProfissionalDetalhesPage } from "../features/profissionais/page/ProfissionalDetalhesPage";
 import { CadastroProfissionalPage } from "../features/profissionais/page/CadastroProfissionalPage";
+import { MeuPerfilPage } from "../features/perfil/pages/MeuPerfilPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path:"/cadastro-profissional",
         element: <CadastroProfissionalPage/>,
+      },
+      {
+        path: "/meu-perfil",
+        element: <MeuPerfilPage/>
       },
     ],
   },

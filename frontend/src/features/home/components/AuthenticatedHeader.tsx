@@ -42,7 +42,6 @@ export function AuthenticatedHeader() {
       <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-5 lg:px-8">
         <Logo size="sm" />
 
-        {/* Navegação desktop */}
         <nav className="hidden items-center gap-7 md:flex">
           {navigation.map((item) =>
             item.to.includes("#") ? (
@@ -71,7 +70,6 @@ export function AuthenticatedHeader() {
           )}
         </nav>
 
-        {/* Menu de usuário desktop */}
         <div className="relative hidden md:block">
           <button
             type="button"
@@ -98,7 +96,7 @@ export function AuthenticatedHeader() {
           {perfilAberto && (
             <div className="absolute right-0 mt-2 w-52 rounded-xl border border-achaqui-border bg-white p-2 shadow-lg">
               <Link
-                to="/dashboard"
+                to="/meu-perfil"
                 onClick={() => setPerfilAberto(false)}
                 className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm hover:bg-achaqui-cream"
               >
@@ -118,7 +116,6 @@ export function AuthenticatedHeader() {
           )}
         </div>
 
-        {/* Menu mobile */}
         <div className="flex items-center gap-3 md:hidden">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-achaqui-green text-xs font-bold text-white">
             {iniciais}

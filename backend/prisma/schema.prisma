@@ -19,6 +19,8 @@ model Usuario {
   nome               String
   email              String              @unique
   senhaHash          String
+  whatsapp           String?
+  cidade             String?
   criadoEm           DateTime            @default(now())
   atualizadoEm       DateTime            @updatedAt
 
